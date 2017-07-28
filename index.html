@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>Hangman</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="assets\css\stylePostBootstrap.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+  <script type="text/javascript">
+
+    var thisWord = prompt("Give me a word? (this is temporary)");
+
+    var characterArray = thisWord.split("");
+
+    console.log("this word: " + characterArray);
+
+      
+    var previousGuesses = [];
+    var previousGuessesLength = 0;
+    var maxGuesses = 12;
+
+  	for (var i = 0; i<maxGuesses; i++)
+      	{
+		var thisGuess = prompt("Care to guess a letter?");
+		// TODO:  make sure guess is a single char and valid
+		previousGuessesLength = previousGuesses.length;
+		console.log("Number of Guesses so far: " + previousGuessesLength);
+
+      	for (var x = 0; x<previousGuessesLength; x++)
+      	{
+      		console.log("We are here...");
+      		if (thisGuess.toLowerCase() === previousGuesses[x].toLowerCase())
+      		{
+      			console.log("Guess is a match - dropping it");
+      		}
+      		else
+      		{
+      			console.log("New Guess, add it and go");
+      			previousGuesses += thisGuess;
+      		}
+      	}
+      	
+
+      	console.log("Current guess list: " + previousGuesses);
+      	console.log("guesses left: " + (maxGuesses - (i+1)));
+
+		}
+      
+      // if (confirmCats) {
+      //   alert("Hello " + userName + " my cats information is as follows: " + petName + " " + petType + " " + petAge);
+      // }
+
+      </script>
+</body>
+</html>
