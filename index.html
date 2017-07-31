@@ -7,57 +7,77 @@
   <title>Hangman</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="assets\css\stylePostBootstrap.css">
+  <!-- <link rel="stylesheet" type="text/css" href="assets\css\stylePostBootstrap.css"> -->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 
-  <script type="text/javascript">
+  	<script type="text/javascript">
 
-    var thisWord = prompt("Give me a word? (this is temporary)");
+	  	// TODO:  get word from a pre-defined array
+	    var thisWord = "thisisit";
 
-    var characterArray = thisWord.split("");
+	    // split it into an array for use later
+	    var thisWordArray = thisWord.split("");
 
-    console.log("this word: " + characterArray);
+	    console.log("this word: " + thisWordArray);
 
-      
-    var previousGuesses = [];
-    var previousGuessesLength = 0;
-    var maxGuesses = 12;
+	    var previousGuessesArray = [];
+	    var maxGuesses = 4;
+	    var thisGuess = "";
 
-  	for (var i = 0; i<maxGuesses; i++)
-      	{
-		var thisGuess = prompt("Care to guess a letter?");
-		// TODO:  make sure guess is a single char and valid
-		previousGuessesLength = previousGuesses.length;
-		console.log("Number of Guesses so far: " + previousGuessesLength);
 
-      	for (var x = 0; x<previousGuessesLength; x++)
-      	{
-      		console.log("We are here...");
-      		if (thisGuess.toLowerCase() === previousGuesses[x].toLowerCase())
-      		{
-      			console.log("Guess is a match - dropping it");
-      		}
-      		else
-      		{
-      			console.log("New Guess, add it and go");
-      			previousGuesses += thisGuess;
-      		}
-      	}
-      	
+		document.onkeyup = function(event) {
 
-      	console.log("Current guess list: " + previousGuesses);
-      	console.log("guesses left: " + (maxGuesses - (i+1)));
+			console.log("----- Start of Guess -----")
+			// read the entry from the user - lower case to simplify
+			var keyPressed = event.key.toLowerCase();
 
+			// see if the guess is a valid letter
+			// if it is, check the current array to see if it has been guessed
+			if (isValidLetterToGuess(keyPressed))
+			{
+				console.log("looks like we had a good letter - moving on");
+				checkGuessArrayAddIfMissing(keyPressed);
+			}
+
+			
+
+			// check to see if they won (or lost)
+
+
+			console.log("----- End of Guess -----")
+
+
+		};
+
+		function isValidLetterToGuess (keyPressed) {
+			if (event.keyCode >= 65 && event.keyCode <= 90) // gives us our alphabet
+			{
+	    		//console.log("input was a-z");
+	    		console.log("valid entry:  " + keyPressed);
+	    		return true;
+			}
 		}
-      
-      // if (confirmCats) {
-      //   alert("Hello " + userName + " my cats information is as follows: " + petName + " " + petType + " " + petAge);
-      // }
 
-      </script>
+		function checkGuessArrayAddIfMissing(keyPressed) {
+			//console.log("letter at: " + arrayIndex);
+			if (previousGuessesArray.indexOf(keyPressed) > -1) 
+			{
+				console.log("this letter in the array: " + keyPressed);
+				// TODO don't hurt them for the guess duplicate
+			}
+			else
+			{
+				console.log("NOT in array: " + keyPressed);
+				// add it to the array
+				previousGuessesArray.push(keyPressed);
+			}
+			console.log(previousGuessesArray);
+		}
+
+	</script>
 </body>
 </html>
