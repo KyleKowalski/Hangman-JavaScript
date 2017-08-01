@@ -20,18 +20,30 @@
   		if (debugging) {console.log("----- Start Game -----");}
   		// TODO find a way to limit variable scope
 
+  		var wordArray = [
+  			"Kashyyyk",	
+			"Obi-wan Kenobi",
+			"Darth Vader",
+			"Darth Sidious",
+			"General Grievous",
+			"The Clone Wars",
+			"Leia Organa Solo",
+			"Come to the dark side... we have cookies!",
+			"Jedi"
+			]
 
+		if (debugging) {console.log(wordArray);}
 
-	  	// TODO get word from a pre-defined array
-
-	    var thisWord = "This Is It";
+		var randomNumber = Math.floor(Math.random() * wordArray.length);
+		var thisWord = wordArray[randomNumber];
+		console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);
 
 	    // split it into an array for use later
 	    // TODO make this more complex for use with sentences
 	    	// would require handling of spaces or dashes
 	    var thisWordArray = thisWord.split("");
 
-	    if (debugging) {console.log("this word: " + thisWordArray);}
+	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
 
 	    var previousGuessesArray = []; // clear out and setup the guess array
 	    //var correctGuessesArray = []; // this is our user-visible array
@@ -51,7 +63,7 @@
 				if (debugging) {console.log("looks like we had a good letter >" + keyPressed + "< - moving on");}
 				checkGuessArrayAddIfMissing(keyPressed);
 
-				// check to see if won/lost
+				// check to see if won/lost -- win first as you can win on your last guess
 				if (checkForWin())
 				{
 					console.log("You won!  Congratulations!");
@@ -73,9 +85,9 @@
 					// if not won/lost
 					// refresh the guess stats
 					// show letters guessed
-					console.log("Letters Guessed: " + previousGuessesArray);
+					if (debugging) {console.log("Letters Guessed: " + previousGuessesArray);}
 					// show guess count
-					console.log("Guessed: " + (previousGuessesArray.length) + " Remaining: " + (maxGuesses - previousGuessesArray.length));
+					console.log("Guessed: >" + previousGuessesArray + "< Remaining: " + (maxGuesses - previousGuessesArray.length));
 					// show current word in a semi-guessed state
 					var correctGuessesArray = viewGuessedWord();
 					console.log(correctGuessesArray);
@@ -88,7 +100,7 @@
 		function isValidLetterToGuess (keyPressed) {
 			if (event.keyCode >= 65 && event.keyCode <= 90) // gives us our alphabet
 			{
-	    		if (debugging) {console.log("valid letter:  " + keyPressed);}
+	    		if (debugging) {console.log("Valid letter:  " + keyPressed);}
 	    		return true;
 			}
 		}
@@ -96,35 +108,32 @@
 		function checkGuessArrayAddIfMissing(keyPressed) {
 			if (previousGuessesArray.indexOf(keyPressed) > -1) 
 			{
-				if (debugging) {console.log("this letter in the array: " + keyPressed);}
+				if (debugging) {console.log("This letter previously guessed: " + keyPressed);}
 			}
 			else
 			{
-				if (debugging) {console.log("NOT in array: " + keyPressed);}
+				if (debugging) {console.log("NOT previously guessed, adding: " + keyPressed);}
 				// add new guess to the array
 				previousGuessesArray.push(keyPressed);
 			}
 		}
 
 		function checkForWin() {
-			// if we have guessed all of the letters
-			//for (var i = 0; i < thisArray.length; i++) {	
-			//}
-			if (false) //TODO FIX THIS
-			{
-				return true;
+			var weWon = true;
+			var correctGuessesArray = viewGuessedWord();
+
+			if (correctGuessesArray.indexOf("_") > -1) {
+					console.log()
+					weWon = false;
 			}
-			else
-			{
-				return false;
-			}
+			return weWon;
 		}
 
 		function checkForLoss() {
 			var guessesLeft = maxGuesses - previousGuessesArray.length;
 			if (guessesLeft == 0)
 			{
-				console.log("looks like we lost, " + guessesLeft + " guesses remain.");
+				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
 				return true;
 			}
 			else
@@ -140,14 +149,14 @@
 			for (var i = 0; i < thisWordArray.length; i++) {
 
 				// if it's dash or underscore, just pass it through
-				if (thisWordArray[i] === " " || thisWordArray[i] === "-") {
+				if (thisWordArray[i] === " " || thisWordArray[i] === "-" || thisWordArray[i] === ".") {
 					returnWordArray.push(thisWordArray[i])
 				}
-				// if it is part of the previous guesses - show the letter
+				// if it is part of the guessed letters - show the letter
 				else if (previousGuessesArray.indexOf(thisWordArray[i].toLowerCase()) > -1) {
 					returnWordArray.push(thisWordArray[i])
 				}
-				// if it is not guessed, send back an underscore or blank character
+				// if it is not guessed, send back an underscore or "blank" character
 				else {
 					returnWordArray.push("_");
 				}
