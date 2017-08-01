@@ -15,7 +15,7 @@
 
   	<script type="text/javascript">
   		// obvious variable is obvious - used for 'teaching' myself... and others.
-  		var debugging = true;
+  		var debugging = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
   		// TODO find a way to limit variable scope
@@ -46,9 +46,9 @@
 	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
 
 	    var previousGuessesArray = []; // clear out and setup the guess array
-	    //var correctGuessesArray = []; // this is our user-visible array
 
 	    var maxGuesses = 7; // TODO make this a user variable easy/medium/hard ?
+	    var incorrectGuesses = 0;
 
 		document.onkeyup = function(event) {
 
@@ -87,7 +87,7 @@
 					// show letters guessed
 					if (debugging) {console.log("Letters Guessed: " + previousGuessesArray);}
 					// show guess count
-					console.log("Guessed: >" + previousGuessesArray + "< Remaining: " + (maxGuesses - previousGuessesArray.length));
+					console.log("Guessed: >" + previousGuessesArray + "< Remaining: " + (maxGuesses - incorrectGuesses));
 					// show current word in a semi-guessed state
 					var correctGuessesArray = viewGuessedWord();
 					console.log(correctGuessesArray);
@@ -115,6 +115,7 @@
 				if (debugging) {console.log("NOT previously guessed, adding: " + keyPressed);}
 				// add new guess to the array
 				previousGuessesArray.push(keyPressed);
+				wasThisAGoodGuessOrDoYouHangMore(keyPressed);
 			}
 		}
 
@@ -130,7 +131,7 @@
 		}
 
 		function checkForLoss() {
-			var guessesLeft = maxGuesses - previousGuessesArray.length;
+			var guessesLeft = maxGuesses - incorrectGuesses;
 			if (guessesLeft == 0)
 			{
 				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
@@ -166,6 +167,16 @@
 			return returnWordArray;
 		}
 
+		function wasThisAGoodGuessOrDoYouHangMore(keyPressed) {
+			if (thisWordArray.indexOf(keyPressed) == -1) {
+				console.log("Incorrect Guess!");
+				incorrectGuesses++;
+			}
+			else {
+				console.log("Good guess!");
+			}
+
+		}
 	</script>
 </body>
 </html>
