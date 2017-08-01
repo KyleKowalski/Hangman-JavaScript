@@ -16,6 +16,7 @@
   	<script type="text/javascript">
   		// obvious variable is obvious - used for 'teaching' myself... and others.
   		var debugging = false;
+  		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
   		// TODO find a way to limit variable scope
@@ -46,9 +47,9 @@
 	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
 
 	    var previousGuessesArray = []; // clear out and setup the guess array
-
-	    var maxGuesses = 7; // TODO make this a user variable easy/medium/hard ?
+	    var maxIncorrectGuesses = 7; // TODO make this a user variable easy/medium/hard ?
 	    var incorrectGuesses = 0;
+	    var keyPressed = "";
 
 		document.onkeyup = function(event) {
 
@@ -60,12 +61,15 @@
 			// if it is, check the current array to see if it has been guessed
 			if (isValidLetterToGuess(keyPressed))
 			{
-				if (debugging) {console.log("looks like we had a good letter >" + keyPressed + "< - moving on");}
+				if (debugging) {console.log("Looks like we had a good letter >" + keyPressed + "< - moving on");}
 				checkGuessArrayAddIfMissing(keyPressed);
 
-				// check to see if won/lost -- win first as you can win on your last guess
+				var correctGuessesArray = viewGuessedWord();
+
+				// check to see if won/lost -- win first as one can win on their last guess
 				if (checkForWin())
 				{
+					console.log(correctGuessesArray);
 					console.log("You won!  Congratulations!");
 
 					// TODO something to end the game and restart
@@ -82,14 +86,10 @@
 				}
 				else
 				{
-					// if not won/lost
-					// refresh the guess stats
-					// show letters guessed
-					if (debugging) {console.log("Letters Guessed: " + previousGuessesArray);}
-					// show guess count
-					console.log("Guessed: >" + previousGuessesArray + "< Remaining: " + (maxGuesses - incorrectGuesses));
+					// if not won/lost - refresh the guess stats
+					// show letters guessed & show guess count remaining
+					console.log("Guessed letters: >" + previousGuessesArray + "< Remaining: " + (maxIncorrectGuesses - incorrectGuesses));
 					// show current word in a semi-guessed state
-					var correctGuessesArray = viewGuessedWord();
 					console.log(correctGuessesArray);
 				}
 			}
@@ -115,6 +115,7 @@
 				if (debugging) {console.log("NOT previously guessed, adding: " + keyPressed);}
 				// add new guess to the array
 				previousGuessesArray.push(keyPressed);
+				// see if the guess should count against the player
 				wasThisAGoodGuessOrDoYouHangMore(keyPressed);
 			}
 		}
@@ -131,7 +132,7 @@
 		}
 
 		function checkForLoss() {
-			var guessesLeft = maxGuesses - incorrectGuesses;
+			var guessesLeft = maxIncorrectGuesses - incorrectGuesses;
 			if (guessesLeft == 0)
 			{
 				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
@@ -150,7 +151,10 @@
 			for (var i = 0; i < thisWordArray.length; i++) {
 
 				// if it's dash or underscore, just pass it through
-				if (thisWordArray[i] === " " || thisWordArray[i] === "-" || thisWordArray[i] === ".") {
+				if (thisWordArray[i] === " " 
+					|| thisWordArray[i] === "-" 
+					|| thisWordArray[i] === "."
+					|| thisWordArray[i] === "!") {
 					returnWordArray.push(thisWordArray[i])
 				}
 				// if it is part of the guessed letters - show the letter
@@ -161,21 +165,22 @@
 				else {
 					returnWordArray.push("_");
 				}
-				if (debugging) {console.log("Building to return: >" + returnWordArray + "<");}
+				if (verbose) {console.log("Building to return: >" + returnWordArray + "<");}
 			}
 			if (debugging) {console.log("Finished, returning: >" + returnWordArray + "<");}
 			return returnWordArray;
 		}
 
 		function wasThisAGoodGuessOrDoYouHangMore(keyPressed) {
-			if (thisWordArray.indexOf(keyPressed) == -1) {
-				console.log("Incorrect Guess!");
-				incorrectGuesses++;
+			// if our key entered by the user is either upper or lower case it's a good guess, if it's NEITHER, it's incorrect
+			if ((thisWordArray.indexOf(keyPressed) || thisWordArray.indexOf(keyPressed.toUpperCase())) !== -1) {
+				if (debugging) {console.log("Good guess!");}
 			}
 			else {
-				console.log("Good guess!");
+				if (debugging) {console.log("Incorrect Guess! >" + keyPressed + "<");}
+				incorrectGuesses++;
 			}
-
+			if (debugging) {console.log("Bad guesses so far: " + incorrectGuesses);}
 		}
 	</script>
 </body>
