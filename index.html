@@ -7,7 +7,6 @@
   <title>Hangman</title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" type="text/css" href="assets\css\stylePostBootstrap.css"> -->
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -15,67 +14,147 @@
 <body>
 
   	<script type="text/javascript">
+  		// obvious variable is obvious - used for 'teaching' myself... and others.
+  		var debugging = true;
 
-	  	// TODO:  get word from a pre-defined array
-	    var thisWord = "thisisit";
+  		if (debugging) {console.log("----- Start Game -----");}
+  		// TODO find a way to limit variable scope
+
+
+
+	  	// TODO get word from a pre-defined array
+
+	    var thisWord = "This Is It";
 
 	    // split it into an array for use later
+	    // TODO make this more complex for use with sentences
+	    	// would require handling of spaces or dashes
 	    var thisWordArray = thisWord.split("");
 
-	    console.log("this word: " + thisWordArray);
+	    if (debugging) {console.log("this word: " + thisWordArray);}
 
-	    var previousGuessesArray = [];
-	    var maxGuesses = 4;
-	    var thisGuess = "";
+	    var previousGuessesArray = []; // clear out and setup the guess array
+	    //var correctGuessesArray = []; // this is our user-visible array
 
+	    var maxGuesses = 7; // TODO make this a user variable easy/medium/hard ?
 
 		document.onkeyup = function(event) {
 
-			console.log("----- Start of Guess -----")
-			// read the entry from the user - lower case to simplify
+			if (debugging) {console.log("----- Start of Guess -----");}
+			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
 			// see if the guess is a valid letter
 			// if it is, check the current array to see if it has been guessed
 			if (isValidLetterToGuess(keyPressed))
 			{
-				console.log("looks like we had a good letter - moving on");
+				if (debugging) {console.log("looks like we had a good letter >" + keyPressed + "< - moving on");}
 				checkGuessArrayAddIfMissing(keyPressed);
+
+				// check to see if won/lost
+				if (checkForWin())
+				{
+					console.log("You won!  Congratulations!");
+
+					// TODO something to end the game and restart
+
+					if (debugging) {console.log("----- End Game -----");}
+				}
+				else if(checkForLoss())
+				{
+					console.log("Game Over. wah waaa");
+
+					// TODO something to end the game and restart
+
+					if (debugging) {console.log("----- End Game -----");}
+				}
+				else
+				{
+					// if not won/lost
+					// refresh the guess stats
+					// show letters guessed
+					console.log("Letters Guessed: " + previousGuessesArray);
+					// show guess count
+					console.log("Guessed: " + (previousGuessesArray.length) + " Remaining: " + (maxGuesses - previousGuessesArray.length));
+					// show current word in a semi-guessed state
+					var correctGuessesArray = viewGuessedWord();
+					console.log(correctGuessesArray);
+				}
 			}
 
-			
-
-			// check to see if they won (or lost)
-
-
-			console.log("----- End of Guess -----")
-
-
+			if (debugging) {console.log("----- End of Guess -----");}
 		};
 
 		function isValidLetterToGuess (keyPressed) {
 			if (event.keyCode >= 65 && event.keyCode <= 90) // gives us our alphabet
 			{
-	    		//console.log("input was a-z");
-	    		console.log("valid entry:  " + keyPressed);
+	    		if (debugging) {console.log("valid letter:  " + keyPressed);}
 	    		return true;
 			}
 		}
 
 		function checkGuessArrayAddIfMissing(keyPressed) {
-			//console.log("letter at: " + arrayIndex);
 			if (previousGuessesArray.indexOf(keyPressed) > -1) 
 			{
-				console.log("this letter in the array: " + keyPressed);
-				// TODO don't hurt them for the guess duplicate
+				if (debugging) {console.log("this letter in the array: " + keyPressed);}
 			}
 			else
 			{
-				console.log("NOT in array: " + keyPressed);
-				// add it to the array
+				if (debugging) {console.log("NOT in array: " + keyPressed);}
+				// add new guess to the array
 				previousGuessesArray.push(keyPressed);
 			}
-			console.log(previousGuessesArray);
+		}
+
+		function checkForWin() {
+			// if we have guessed all of the letters
+			//for (var i = 0; i < thisArray.length; i++) {	
+			//}
+			if (false) //TODO FIX THIS
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		function checkForLoss() {
+			var guessesLeft = maxGuesses - previousGuessesArray.length;
+			if (guessesLeft == 0)
+			{
+				console.log("looks like we lost, " + guessesLeft + " guesses remain.");
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		function viewGuessedWord() {
+			// setup to return this item at the end
+			var returnWordArray = [];
+
+			for (var i = 0; i < thisWordArray.length; i++) {
+
+				// if it's dash or underscore, just pass it through
+				if (thisWordArray[i] === " " || thisWordArray[i] === "-") {
+					returnWordArray.push(thisWordArray[i])
+				}
+				// if it is part of the previous guesses - show the letter
+				else if (previousGuessesArray.indexOf(thisWordArray[i].toLowerCase()) > -1) {
+					returnWordArray.push(thisWordArray[i])
+				}
+				// if it is not guessed, send back an underscore or blank character
+				else {
+					returnWordArray.push("_");
+				}
+				if (debugging) {console.log("Building to return: >" + returnWordArray + "<");}
+			}
+			if (debugging) {console.log("Finished, returning: >" + returnWordArray + "<");}
+			return returnWordArray;
 		}
 
 	</script>
