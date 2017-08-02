@@ -26,7 +26,7 @@
 
   	<script type="text/javascript">
   		// obvious variable is obvious - used for 'teaching' myself... and others.
-  		var debugging = false;
+  		var debugging = true;
   		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
@@ -46,6 +46,7 @@
 
 		if (debugging) {console.log(wordArray);}
 
+		//setupGame(wordArray);
 		var randomNumber = Math.floor(Math.random() * wordArray.length);
 		var thisWord = wordArray[randomNumber];
 		if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + thisWord;}
@@ -117,8 +118,7 @@
 			}
 
 			if (debugging) {console.log("----- End of Guess -----");}
-
-			}
+		}
 
 		function isValidLetterToGuess (keyPressed) {
 			if (event.keyCode >= 65 && event.keyCode <= 90) // gives us our alphabet
@@ -154,6 +154,7 @@
 			}
 			else {
 				weWon = true;
+				document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
 			}
 			return weWon;
 		}
@@ -163,6 +164,7 @@
 			if (guessesLeft == 0)
 			{
 				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
+				document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
 				return true;
 			}
 			else
@@ -212,11 +214,28 @@
 			if (debugging) {console.log("Bad guesses so far: " + incorrectGuesses);}
 		}
 
-		function promptToRestart(keyPressed) {
-			document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
+		function setupGame(wordArray) {
+			
 			// TODO RESET ALL THE THINGS!
+			var randomNumber = Math.floor(Math.random() * wordArray.length);
+			var thisWord = wordArray[randomNumber];
+			if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + thisWord;}
+			// TODO remove words once used so they don't repeat
+			//wordArray.remove(randomNumber); // removes the previous word so it cannot be guessed again.  
+			if (debugging) {console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);}
 
-			areWeLockedOut = false;
+		    // split it into an array for use later
+		    var thisWordArray = thisWord.split("");
+
+		    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
+
+		    var previousGuessesArray = []; // clear out and setup the guess array
+		    var maxIncorrectGuesses = 3; // TODO make this a user variable easy/medium/hard ?
+		    var incorrectGuesses = 0;  
+		    
+			var correctGuessesArray = viewGuessedWord();
+			document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
+		
 			
 		}
 
