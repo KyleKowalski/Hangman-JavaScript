@@ -21,12 +21,13 @@
 	<div id="numberOfGuessesRemaining"></div>
 	<div id="wonOrLost"></div>
 	<div id="tryAgain"></div>
+	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
 	
 
 
   	<script type="text/javascript">
   		// obvious variable is obvious - used for 'teaching' myself... and others.
-  		var debugging = true;
+  		var debugging = false;
   		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
@@ -219,6 +220,13 @@
 
 			var randomNumber = Math.floor(Math.random() * wordArray.length);
 			game.thisWord = wordArray[randomNumber];
+			if (wordArray.length === 0)
+			{
+				console.log("annnnd we're out of words");
+				document.getElementById("pleaseRefreshBrowser").classList.remove("hidden");
+			}
+			wordArray.splice(randomNumber, 1);
+
 			if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + game.thisWord;}
 
 			if (debugging) {console.log ("(Game) Our random number: " + randomNumber + " so word is: " + game.thisWord);}
