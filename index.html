@@ -6,12 +6,23 @@
 
   <title>Hangman</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body>
+	<div id="title"><h1>Star Wars</h1><h3>Themed Hangman Game</h3><h5>by Kyle Kowalski</h5></div>
+	<div id="instructions">Start typing anywhere within the current window to guess the target word, good luck!</div>
+	<div id="currentGameWord" class=""></div>
+	<!--<div id="currentHint"></div> -->
+	<div id="currentPartialWord"></div>
+	<div id="currentLettersGuessed"></div>
+	<div id="numberOfGuessesRemaining"></div>
+	<div id="wonOrLost"></div>
+	<div id="tryAgain"></div>
+	
+
 
   	<script type="text/javascript">
   		// obvious variable is obvious - used for 'teaching' myself... and others.
@@ -21,9 +32,8 @@
   		if (debugging) {console.log("----- Start Game -----");}
   		// TODO find a way to limit variable scope
 			
-
   		var wordArray = [
-  			"Kashyyyk",	
+  			"Kashyyyk",
   			"Darth Vader",
 			"Obi-wan Kenobi",
 			"Darth Sidious",
@@ -38,8 +48,10 @@
 
 		var randomNumber = Math.floor(Math.random() * wordArray.length);
 		var thisWord = wordArray[randomNumber];
+		if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + thisWord;}
+		// TODO remove words once used so they don't repeat
 		//wordArray.remove(randomNumber); // removes the previous word so it cannot be guessed again.  
-		//console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);
+		if (debugging) {console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);}
 
 	    // split it into an array for use later
 	    var thisWordArray = thisWord.split("");
@@ -47,11 +59,11 @@
 	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
 
 	    var previousGuessesArray = []; // clear out and setup the guess array
-	    var maxIncorrectGuesses = 7; // TODO make this a user variable easy/medium/hard ?
-	    var incorrectGuesses = 0;
-	    //var keyPressed = "";
-
+	    var maxIncorrectGuesses = 3; // TODO make this a user variable easy/medium/hard ?
+	    var incorrectGuesses = 0;  
+	    
 		var correctGuessesArray = viewGuessedWord();
+		document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
 		console.log("Start typing letters to guess the following: ");
 		console.log(correctGuessesArray);
 
@@ -75,7 +87,9 @@
 				{
 					console.log(correctGuessesArray);
 					console.log("You won!  Congratulations!");
-
+					document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
+					document.getElementById("wonOrLost").innerHTML = "You Won, and won't hang... this time!";
+					var areWeLockedOut = true; // game was won, lock it out for now
 					// TODO something to end the game and restart
 
 					if (debugging) {console.log("----- End Game -----");}
@@ -83,7 +97,8 @@
 				else if(checkForLoss())
 				{
 					console.log("Game Over. wah waaa");
-
+					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + thisWord;
+					var areWeLockedOut = true; // game was lost, lock it out for now
 					// TODO something to end the game and restart
 
 					if (debugging) {console.log("----- End Game -----");}
@@ -93,13 +108,17 @@
 					// if not won/lost - refresh the guess stats
 					// show letters guessed & show guess count remaining
 					console.log("Guessed letters: >" + previousGuessesArray + "< Remaining: " + (maxIncorrectGuesses - incorrectGuesses));
+					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + previousGuessesArray;
+					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (maxIncorrectGuesses - incorrectGuesses);
 					// show current word in a semi-guessed state
 					console.log(correctGuessesArray);
+					document.getElementById("currentPartialWord").innerHTML = "The current word: " + correctGuessesArray;
 				}
 			}
 
 			if (debugging) {console.log("----- End of Guess -----");}
-		};
+
+			}
 
 		function isValidLetterToGuess (keyPressed) {
 			if (event.keyCode >= 65 && event.keyCode <= 90) // gives us our alphabet
@@ -113,6 +132,7 @@
 			if (previousGuessesArray.indexOf(keyPressed) > -1) 
 			{
 				if (debugging) {console.log("This letter previously guessed: " + keyPressed);}
+				// we don't do anything if they guessed the letter already - this statement is mostly for mental clarity
 			}
 			else
 			{
@@ -125,12 +145,15 @@
 		}
 
 		function checkForWin() {
-			var weWon = true;
+			var weWon = false;
 			var correctGuessesArray = viewGuessedWord();
 
 			if (correctGuessesArray.indexOf("_") > -1) {
 					console.log()
 					weWon = false;
+			}
+			else {
+				weWon = true;
 			}
 			return weWon;
 		}
@@ -154,7 +177,7 @@
 
 			for (var i = 0; i < thisWordArray.length; i++) {
 
-				// if it's dash or underscore, just pass it through
+				// if it's dash\underscore\etc, just pass it through
 				if (thisWordArray[i] === " " 
 					|| thisWordArray[i] === "-" 
 					|| thisWordArray[i] === "."
@@ -173,7 +196,7 @@
 			}
 			if (debugging) {console.log("Finished, returning: >" + returnWordArray + "<");}
 
-			var returnWordArrayCondensed = returnWordArray.join();
+			var returnWordArrayCondensed = returnWordArray.join("");
 			return returnWordArrayCondensed
 		}
 
@@ -188,6 +211,15 @@
 			}
 			if (debugging) {console.log("Bad guesses so far: " + incorrectGuesses);}
 		}
+
+		function promptToRestart(keyPressed) {
+			document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
+			// TODO RESET ALL THE THINGS!
+
+			areWeLockedOut = false;
+			
+		}
+
 	</script>
 </body>
 </html>
