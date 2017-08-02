@@ -20,11 +20,12 @@
 
   		if (debugging) {console.log("----- Start Game -----");}
   		// TODO find a way to limit variable scope
+			
 
   		var wordArray = [
   			"Kashyyyk",	
+  			"Darth Vader",
 			"Obi-wan Kenobi",
-			"Darth Vader",
 			"Darth Sidious",
 			"General Grievous",
 			"The Clone Wars",
@@ -37,11 +38,10 @@
 
 		var randomNumber = Math.floor(Math.random() * wordArray.length);
 		var thisWord = wordArray[randomNumber];
-		console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);
+		//wordArray.remove(randomNumber); // removes the previous word so it cannot be guessed again.  
+		//console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);
 
 	    // split it into an array for use later
-	    // TODO make this more complex for use with sentences
-	    	// would require handling of spaces or dashes
 	    var thisWordArray = thisWord.split("");
 
 	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
@@ -49,7 +49,11 @@
 	    var previousGuessesArray = []; // clear out and setup the guess array
 	    var maxIncorrectGuesses = 7; // TODO make this a user variable easy/medium/hard ?
 	    var incorrectGuesses = 0;
-	    var keyPressed = "";
+	    //var keyPressed = "";
+
+		var correctGuessesArray = viewGuessedWord();
+		console.log("Start typing letters to guess the following: ");
+		console.log(correctGuessesArray);
 
 		document.onkeyup = function(event) {
 
@@ -168,7 +172,9 @@
 				if (verbose) {console.log("Building to return: >" + returnWordArray + "<");}
 			}
 			if (debugging) {console.log("Finished, returning: >" + returnWordArray + "<");}
-			return returnWordArray;
+
+			var returnWordArrayCondensed = returnWordArray.join();
+			return returnWordArrayCondensed
 		}
 
 		function wasThisAGoodGuessOrDoYouHangMore(keyPressed) {
