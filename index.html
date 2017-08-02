@@ -53,14 +53,17 @@
 
 		document.onkeyup = function(event) {
 
-			if (game.finished === true) {
-				game = setupGame(wordArray);
-			}
+
 
 			if (debugging) {console.log("----- Start of Guess -----");}
 			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
+			if (game.finished === true) {
+				game = setupGame(wordArray);
+				console.log("New Game!");
+				return false;
+			}
 			// see if the guess is a valid letter
 			// if it is, check the current array to see if it has been guessed
 			if (isValidLetterToGuess(keyPressed))
@@ -75,6 +78,8 @@
 				{
 					console.log(correctGuessesArray);
 					console.log("You won!  Congratulations!");
+					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
+					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
 					document.getElementById("wonOrLost").innerHTML = "You Won, and won't hang... this time!";
 					if (debugging) {console.log("----- End Game -----");}
@@ -87,8 +92,7 @@
 				}
 				else
 				{
-					// if not won/lost - refresh the guess stats
-					// show letters guessed & show guess count remaining
+					// if not won/lost - show letters guessed & show guess count remaining
 					console.log("Guessed letters: >" + game.previousGuessesArray + "< Remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses));
 					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
 					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
@@ -186,13 +190,16 @@
 		}
 
 		function wasThisAGoodGuessOrDoYouHangMore(keyPressed) {
+			var thisWordLower = game.thisWordArray.indexOf(keyPressed);
+			var thisWordUpper = game.thisWordArray.indexOf(keyPressed.toUpperCase());
+			if (debugging) {console.log("Lower: " + thisWordLower + " Upper: " + thisWordUpper);}
 			// if our key entered by the user is either upper or lower case it's a good guess, if it's NEITHER, it's incorrect
-			if ((game.thisWordArray.indexOf(keyPressed) || game.thisWordArray.indexOf(keyPressed.toUpperCase())) !== -1) {
-				if (debugging) {console.log("Good guess!");}
-			}
-			else {
+			if ((thisWordLower === -1) && (thisWordUpper == -1)) {
 				if (debugging) {console.log("Incorrect Guess! >" + keyPressed + "<");}
 				game.incorrectGuesses++;
+			}
+			else {
+				if (debugging) {console.log("Good guess!");}
 			}
 			if (debugging) {console.log("Bad guesses so far: " + game.incorrectGuesses);}
 		}
