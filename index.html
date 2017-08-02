@@ -46,27 +46,10 @@
 
 		if (debugging) {console.log(wordArray);}
 
-		//setupGame(wordArray);
-		var randomNumber = Math.floor(Math.random() * wordArray.length);
-		var thisWord = wordArray[randomNumber];
-		if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + thisWord;}
-		// TODO remove words once used so they don't repeat
-		//wordArray.remove(randomNumber); // removes the previous word so it cannot be guessed again.  
-		if (debugging) {console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);}
+		var game = setupGame(wordArray);
 
-	    // split it into an array for use later
-	    var thisWordArray = thisWord.split("");
-
-	    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
-
-	    var previousGuessesArray = []; // clear out and setup the guess array
-	    var maxIncorrectGuesses = 3; // TODO make this a user variable easy/medium/hard ?
-	    var incorrectGuesses = 0;  
-	    
-		var correctGuessesArray = viewGuessedWord();
-		document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
 		console.log("Start typing letters to guess the following: ");
-		console.log(correctGuessesArray);
+		console.log(game.correctGuessesArray);
 
 		document.onkeyup = function(event) {
 
@@ -81,7 +64,7 @@
 				if (debugging) {console.log("Looks like we had a good letter >" + keyPressed + "< - moving on");}
 				checkGuessArrayAddIfMissing(keyPressed);
 
-				var correctGuessesArray = viewGuessedWord();
+				var correctGuessesArray = viewGuessedWord(game.thisWordArray, game.previousGuessesArray);
 
 				// check to see if won/lost -- win first as one can win on their last guess
 				if (checkForWin())
@@ -98,7 +81,7 @@
 				else if(checkForLoss())
 				{
 					console.log("Game Over. wah waaa");
-					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + thisWord;
+					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + game.thisWord;
 					var areWeLockedOut = true; // game was lost, lock it out for now
 					// TODO something to end the game and restart
 
@@ -108,12 +91,12 @@
 				{
 					// if not won/lost - refresh the guess stats
 					// show letters guessed & show guess count remaining
-					console.log("Guessed letters: >" + previousGuessesArray + "< Remaining: " + (maxIncorrectGuesses - incorrectGuesses));
-					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + previousGuessesArray;
-					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (maxIncorrectGuesses - incorrectGuesses);
+					console.log("Guessed letters: >" + game.previousGuessesArray + "< Remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses));
+					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
+					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					// show current word in a semi-guessed state
-					console.log(correctGuessesArray);
-					document.getElementById("currentPartialWord").innerHTML = "The current word: " + correctGuessesArray;
+					console.log(game.correctGuessesArray);
+					document.getElementById("currentPartialWord").innerHTML = "The current word: " + game.correctGuessesArray;
 				}
 			}
 
@@ -129,7 +112,7 @@
 		}
 
 		function checkGuessArrayAddIfMissing(keyPressed) {
-			if (previousGuessesArray.indexOf(keyPressed) > -1) 
+			if (game.previousGuessesArray.indexOf(keyPressed) > -1) 
 			{
 				if (debugging) {console.log("This letter previously guessed: " + keyPressed);}
 				// we don't do anything if they guessed the letter already - this statement is mostly for mental clarity
@@ -138,7 +121,7 @@
 			{
 				if (debugging) {console.log("NOT previously guessed, adding: " + keyPressed);}
 				// add new guess to the array
-				previousGuessesArray.push(keyPressed);
+				game.previousGuessesArray.push(keyPressed);
 				// see if the guess should count against the player
 				wasThisAGoodGuessOrDoYouHangMore(keyPressed);
 			}
@@ -146,34 +129,37 @@
 
 		function checkForWin() {
 			var weWon = false;
-			var correctGuessesArray = viewGuessedWord();
+			game.correctGuessesArray = viewGuessedWord(game.thisWordArray, game.previousGuessesArray);
 
-			if (correctGuessesArray.indexOf("_") > -1) {
+			if (game.correctGuessesArray.indexOf("_") > -1) {
 					console.log()
 					weWon = false;
 			}
 			else {
 				weWon = true;
 				document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
+				//setupGame(wordArray);
 			}
 			return weWon;
 		}
 
 		function checkForLoss() {
-			var guessesLeft = maxIncorrectGuesses - incorrectGuesses;
+			var weLost = false;
+			var guessesLeft = game.maxIncorrectGuesses - game.incorrectGuesses;
 			if (guessesLeft == 0)
 			{
 				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
 				document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
-				return true;
+				weLost = true;
 			}
 			else
 			{
-				return false;
+				weLost = false;
 			}
+			return weLost;
 		}
 
-		function viewGuessedWord() {
+		function viewGuessedWord(thisWordArray, previousGuessesArray) {
 			// setup to return this item at the end
 			var returnWordArray = [];
 
@@ -204,39 +190,41 @@
 
 		function wasThisAGoodGuessOrDoYouHangMore(keyPressed) {
 			// if our key entered by the user is either upper or lower case it's a good guess, if it's NEITHER, it's incorrect
-			if ((thisWordArray.indexOf(keyPressed) || thisWordArray.indexOf(keyPressed.toUpperCase())) !== -1) {
+			if ((game.thisWordArray.indexOf(keyPressed) || game.thisWordArray.indexOf(keyPressed.toUpperCase())) !== -1) {
 				if (debugging) {console.log("Good guess!");}
 			}
 			else {
 				if (debugging) {console.log("Incorrect Guess! >" + keyPressed + "<");}
-				incorrectGuesses++;
+				game.incorrectGuesses++;
 			}
-			if (debugging) {console.log("Bad guesses so far: " + incorrectGuesses);}
+			if (debugging) {console.log("Bad guesses so far: " + game.incorrectGuesses);}
 		}
 
 		function setupGame(wordArray) {
 			
+			var game = {thisWord:"", 
+						thisWordArray:[], 
+						previousGuessesArray:[],
+						correctGuessesArray:[], 
+						maxIncorrectGuesses:7, 
+						incorrectGuesses:0};
+
 			// TODO RESET ALL THE THINGS!
 			var randomNumber = Math.floor(Math.random() * wordArray.length);
-			var thisWord = wordArray[randomNumber];
-			if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + thisWord;}
-			// TODO remove words once used so they don't repeat
-			//wordArray.remove(randomNumber); // removes the previous word so it cannot be guessed again.  
-			if (debugging) {console.log ("Our random number: " + randomNumber + " so word is: " + thisWord);}
+			game.thisWord = wordArray[randomNumber];
+			if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + game.thisWord;}
+
+			if (debugging) {console.log ("(Game) Our random number: " + randomNumber + " so word is: " + game.thisWord);}
 
 		    // split it into an array for use later
-		    var thisWordArray = thisWord.split("");
+		    game.thisWordArray = game.thisWord.split("");
 
-		    if (debugging) {console.log("For this game we'll use: " + thisWordArray);}
-
-		    var previousGuessesArray = []; // clear out and setup the guess array
-		    var maxIncorrectGuesses = 3; // TODO make this a user variable easy/medium/hard ?
-		    var incorrectGuesses = 0;  
+		    if (debugging) {console.log("(Game) For this game we'll use: " + game.thisWordArray);}
 		    
-			var correctGuessesArray = viewGuessedWord();
-			document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
+			game.correctGuessesArray = viewGuessedWord(game.thisWordArray, game.previousGuessesArray);
+			document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + game.correctGuessesArray;
 		
-			
+			return game;
 		}
 
 	</script>
