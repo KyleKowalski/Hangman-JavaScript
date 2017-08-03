@@ -26,6 +26,8 @@
 	<div id="textInputForMobileToShowKeyboard" class="">
 		<label>Input for mobile devices:</label>
 		<input type="text" id="mobileInput" name="test">
+		<br>
+		<div id="lastEvent"></div>
 	</div>
 
 
@@ -35,7 +37,7 @@
  		//document.getElementById("#mobileInput").focus();
 
   		// obvious variable is obvious - used for 'teaching' myself and others.
-  		var debugging = false;
+  		var debugging = true;
   		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
@@ -66,6 +68,7 @@
 			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
+			if (debugging) {document.getElementById("lastEvent").innerHTML = "Last event key: >" + keyPressed + "<";}
 			if (verbose) {console.log(game);}
 
 			if (game.finished === true) {
