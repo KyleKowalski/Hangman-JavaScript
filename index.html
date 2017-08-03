@@ -23,10 +23,17 @@
 	<div id="tryAgain"></div>
 	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
 	
+	<div id="getMobileToShowKeyboard" class="hidden">
+		<input type="text" id="testInput" name="test">
+	</div>
 
 
   	<script type="text/javascript">
-  		// obvious variable is obvious - used for 'teaching' myself... and others.
+
+  		// this is to get mobile devices to show their keyboard and make the game playable there
+  		$("#textInput").focus();
+
+  		// obvious variable is obvious - used for 'teaching' myself and others.
   		var debugging = false;
   		var verbose = false;
 
@@ -53,8 +60,6 @@
 		console.log(game.correctGuessesArray);
 
 		document.onkeyup = function(event) {
-
-
 
 			if (debugging) {console.log("----- Start of Guess -----");}
 			// read the entry from the user - lower case to simplify handling of capital letters
@@ -83,12 +88,14 @@
 					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
 					document.getElementById("wonOrLost").innerHTML = "You Won, and won't hang... this time!";
+					alert("You won!");
 					if (debugging) {console.log("----- End Game -----");}
 				}
 				else if(checkForLoss())
 				{
 					console.log("Game Over. wah waaa");
 					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + game.thisWord;
+					alert("You lost!");
 					if (debugging) {console.log("----- End Game -----");}
 				}
 				else
@@ -99,7 +106,7 @@
 					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					// show current word in a semi-guessed state
 					console.log(game.correctGuessesArray);
-					document.getElementById("currentPartialWord").innerHTML = "The current word: " + game.correctGuessesArray;
+					document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + game.correctGuessesArray;
 				}
 			}
 
@@ -211,7 +218,7 @@
 						thisWordArray:[], 
 						previousGuessesArray:[],
 						correctGuessesArray:[], 
-						maxIncorrectGuesses:7, 
+						maxIncorrectGuesses:10, 
 						incorrectGuesses:0,
 						finished:false
 						};
@@ -225,7 +232,7 @@
 				console.log("annnnd we're out of words");
 				document.getElementById("pleaseRefreshBrowser").classList.remove("hidden");
 			}
-			wordArray.splice(randomNumber, 1);
+			wordArray.splice(randomNumber, 1); // removes the current word from the word array so it can't be re-used
 
 			if (debugging) {document.getElementById("currentGameWord").innerHTML = "We are debugging so this is the word or phrase: " + game.thisWord;}
 
