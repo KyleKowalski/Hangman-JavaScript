@@ -22,16 +22,17 @@
 	<div id="wonOrLost"></div>
 	<div id="tryAgain"></div>
 	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
-	
-	<div id="getMobileToShowKeyboard" class="hidden">
-		<input type="text" id="testInput" name="test">
+	<hr>
+	<div id="textInputForMobileToShowKeyboard" class="">
+		<label>Input for mobile devices:</label>
+		<input type="text" id="mobileInput" name="test">
 	</div>
 
 
   	<script type="text/javascript">
 
   		// this is to get mobile devices to show their keyboard and make the game playable there
-  		$("#textInput").focus();
+ 		//document.getElementById("#mobileInput").focus();
 
   		// obvious variable is obvious - used for 'teaching' myself and others.
   		var debugging = false;
@@ -65,6 +66,8 @@
 			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
+			if (verbose) {console.log(game);}
+
 			if (game.finished === true) {
 				game = setupGame(wordArray);
 				console.log("New Game!");
@@ -94,6 +97,8 @@
 				else if(checkForLoss())
 				{
 					console.log("Game Over. wah waaa");
+					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
+					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + game.thisWord;
 					alert("You lost!");
 					if (debugging) {console.log("----- End Game -----");}
@@ -159,8 +164,8 @@
 			{
 				if (debugging) {console.log("You lost, please try again! " + guessesLeft + " guesses remain.");}
 				document.getElementById("tryAgain").innerHTML = "Please push any key to start again."
-				return true;
 				game.finished = true;
+				return true;
 			}
 			else
 			{
@@ -257,6 +262,7 @@
 			document.getElementById("numberOfGuessesRemaining").innerHTML = "";
 			document.getElementById("wonOrLost").innerHTML = "";
 			document.getElementById("tryAgain").innerHTML = "";
+			document.getElementById("mobileInput").value = "";
 		}
 
 	</script>
