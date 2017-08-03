@@ -22,9 +22,10 @@
 	<div id="wonOrLost"></div>
 	<div id="tryAgain"></div>
 	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
-	<hr>
-	<div id="textInputForMobileToShowKeyboard" class="">
-		<label>Input for mobile devices:</label>
+	
+	<div id="textInputForMobileToShowKeyboard" class="hidden">
+		<hr>
+		<label>Test input for mobile devices:</label>
 		<input type="text" id="mobileInput" name="test">
 		<br>
 		<div id="lastEvent"></div>
@@ -33,15 +34,14 @@
 
   	<script type="text/javascript">
 
-  		// this is to get mobile devices to show their keyboard and make the game playable there
+  		// TODO fix this - this is to get mobile devices to show their keyboard and make the game playable there
  		//document.getElementById("#mobileInput").focus();
 
   		// obvious variable is obvious - used for 'teaching' myself and others.
-  		var debugging = true;
+  		var debugging = false;
   		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
-  		// TODO find a way to limit variable scope
 			
   		var wordArray = [
   			"Kashyyyk",
@@ -68,7 +68,9 @@
 			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
-			if (debugging) {document.getElementById("lastEvent").innerHTML = "Last event key: >" + keyPressed + "<";}
+			// TODO at some point wrap back around and fix this failed experiment - it doesn't work on mobile
+			// if (debugging) {document.getElementById("lastEvent").innerHTML = "Last event key: >" + keyPressed + "<";}
+
 			if (verbose) {console.log(game);}
 
 			if (game.finished === true) {
@@ -239,6 +241,7 @@
 			{
 				console.log("annnnd we're out of words");
 				document.getElementById("pleaseRefreshBrowser").classList.remove("hidden");
+				return false;
 			}
 			wordArray.splice(randomNumber, 1); // removes the current word from the word array so it can't be re-used
 
