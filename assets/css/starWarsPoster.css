@@ -1,0 +1,56 @@
+.deathStar {
+  border-radius: 50%;
+  position: fixed;
+  height: 100px;
+  width: 100px;
+  background-color: rgba(150, 150, 150, 1);
+  top:125px;
+  left:75px;
+}
+
+.superlaser {
+  border-radius: 50%;
+  position: fixed;
+  height: 26px;
+  width: 25px;
+  background-color: rgba(10, 10, 10, 1);
+  top: 143px;
+  left:135px;
+}
+
+.trench {
+  position:fixed;
+  height:3px;
+  width:100px;
+  top:174px;
+  left:75px;
+  background-color: rgba(10, 10, 10, 1);
+}
+
+.space {
+  /* a little cheat with an image here - looks better then just color*/
+  background-image: url(https://cssanimation.rocks/demo/starwars/images/bg.jpg);
+  height:400px;
+  width:260px;
+}
+
+h1, p {
+  color: rgba(10, 10, 10, 1);
+}
+
+h1 {
+  position:relative;
+  color: rgba(150, 150, 150, 1);
+  font-weight: bold;
+  font-size: 20px;
+  left:10px;
+  top:200px;
+}
+
+p {
+  position:relative;
+  color: rgba(150, 150, 150, 1);
+  font-size: 10px;
+  left:20px;
+  top:200px;
+}
