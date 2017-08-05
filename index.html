@@ -7,24 +7,68 @@
   <title>Hangman</title>
 
   	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  	<!-- <script src="https://code.jquery.com/jquery.js"></script> -->
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="assets\css\starWarsPoster.css"> -->
+	<style>
+		.spaced {
+			letter-spacing: 2px;
+			font-size:15px;
+		}
+	</style>
 </head>
 <body>
-	<div id="title"><h1>Star Wars</h1><h3>Themed Hangman Game</h3><h5>by Kyle Kowalski</h5></div>
-	<div id="instructions">Start typing anywhere within the current window to guess the target word, good luck!</div>
-	<div id="currentGameWord" class=""></div>
-	<div id="currentHint"></div>
-	<div id="currentPartialWord"></div>
-	<div id="currentLettersGuessed"></div>
-	<div id="numberOfGuessesRemaining"></div>
-	<div id="wonOrLost"></div>
-	<div id="tryAgain"></div>
+	<container class="text-center">
+		<row>
+			<div id="title" class="jumbotron">
+				<h1>Star Wars</h1>
+				<h3>Themed Hangman Game</h3>
+				<h5>by Kyle Kowalski</h5>
+				<div class="text-center">
+        			<button class="btn btn-success btn-xs theme-button"><span class="glyphicon glyphicon-music"></span>Play Music!</button>
+        			<button class="btn btn-default btn-xs pause-button"><span class="glyphicon glyphicon-pause"></span>Pause Music</button>
+      			</div>
+      		</div>
+		</row>
+		<row>
+			<div id="instructions">Start typing anywhere within the current window to guess the target word, good luck!</div>
+			<hr>
+		</row>
+	</container>
+	<container>
+		<row class="col-md-12">
+			<div id="leftHalfOfScreen" class="col-md-6">
+				<div id="currentGameWord" class=""></div>
+				<div id="currentHint"></div>
+				<div id="currentPartialWord" class="spaced"></div>
+				<div id="currentLettersGuessed" class=""></div>
+				<div id="numberOfGuessesRemaining"></div>
+			</div>
+			<div id="rightHalfOfScreen" class="col-md-6">
+				<div id="wrongAnswer1" class="hidden">Luke:  Look at him. He's headed for that small moon.</div>
+				<div id="wrongAnswer2" class="hidden">Han:  I think I can get him before he gets there... he's almost in range.</div>
+			    <div id="wrongAnswer3" class="hidden">Ben:  That's no moon! It's a space station.</div>
+		    	<div id="wrongAnswer4" class="hidden">Han:  It's too big to be a space station.</div>
+				<div id="wrongAnswer5" class="hidden">Luke:  I have a very bad feeling about this.</div>
+				<div id="wrongAnswer6" class="hidden">Han:  Yeah, I think your right. Full reverse! Chewie, lock in the auxiliary power.</div>
+				<div id="wrongAnswer7" class="hidden">Luke:  Why are we still moving towards it?</div>
+				<div id="wrongAnswer8" class="hidden">Han:  We're caught in a tractor beam! It's pulling us in!</div>
+				<div id="wrongAnswer9" class="hidden">Luke:  But there's gotta be something you can do!</div>
+				<div id="wrongAnswer10" class="hidden">Han:  There's nothin' I can do about it, kid. I'm in full power. I'm going to have to shut down. But they're not going to get me without a fight!  (You were captured)</div>
+			</div>
+		</row>
+		<row>
+			<div id="wonOrLost"></div>
+			<div id="tryAgain"></div>
+		</row>
+	</container>
 	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
-	<hr>
-	<div id="textInputForMobileToShowKeyboard" class="">
-		<label>Input for mobile devices:</label>
+		
+	<div id="textInputForMobileToShowKeyboard" class="hidden">
+		<hr>
+		<label>(This is an attempt, but is not used and hidden) Test input for mobile devices:</label>
 		<input type="text" id="mobileInput" name="test">
 		<br>
 		<div id="lastEvent"></div>
@@ -32,16 +76,37 @@
 
 
   	<script type="text/javascript">
+     
+     	$(document).ready(function() {
 
-  		// this is to get mobile devices to show their keyboard and make the game playable there
+	    	// Gets Link for Theme Song
+	     	var audioElement = document.createElement("audio");
+	      	audioElement.setAttribute("src", "assets/music/themeMusic.mp3");
+
+	     	var audioElement = document.createElement("audio");
+	      	audioElement.setAttribute("src", "assets/music/gameWon.mp3");
+
+	      	var audioElement = document.createElement("audio");
+	      	audioElement.setAttribute("src", "assets/music/gameLost.mp3");
+
+	      	// Theme Button
+	      	$(".theme-button").on("click", function() {
+		        audioElement.play();
+	    	});
+
+	      	$(".pause-button").on("click", function() {
+	        	audioElement.pause();
+	      	});
+      	});
+
+  		// TODO fix this - this is to get mobile devices to show their keyboard and make the game playable there
  		//document.getElementById("#mobileInput").focus();
 
   		// obvious variable is obvious - used for 'teaching' myself and others.
-  		var debugging = true;
+  		var debugging = false;
   		var verbose = false;
 
   		if (debugging) {console.log("----- Start Game -----");}
-  		// TODO find a way to limit variable scope
 			
   		var wordArray = [
   			"Kashyyyk",
@@ -68,7 +133,9 @@
 			// read the entry from the user - lower case to simplify handling of capital letters
 			var keyPressed = event.key.toLowerCase();
 
-			if (debugging) {document.getElementById("lastEvent").innerHTML = "Last event key: >" + keyPressed + "<";}
+			// TODO at some point wrap back around and fix this failed experiment - it doesn't work on mobile
+			// if (debugging) {document.getElementById("lastEvent").innerHTML = "Last event key: >" + keyPressed + "<";}
+
 			if (verbose) {console.log(game);}
 
 			if (game.finished === true) {
@@ -210,9 +277,11 @@
 			var thisWordUpper = game.thisWordArray.indexOf(keyPressed.toUpperCase());
 			if (debugging) {console.log("Lower: " + thisWordLower + " Upper: " + thisWordUpper);}
 			// if our key entered by the user is either upper or lower case it's a good guess, if it's NEITHER, it's incorrect
-			if ((thisWordLower === -1) && (thisWordUpper == -1)) {
+			if ((thisWordLower === -1) && (thisWordUpper === -1)) {
 				if (debugging) {console.log("Incorrect Guess! >" + keyPressed + "<");}
 				game.incorrectGuesses++;
+				var thisDivId = "wrongAnswer" + game.incorrectGuesses;
+				document.getElementById(thisDivId).classList.remove("hidden")
 			}
 			else {
 				if (debugging) {console.log("Good guess!");}
@@ -239,6 +308,7 @@
 			{
 				console.log("annnnd we're out of words");
 				document.getElementById("pleaseRefreshBrowser").classList.remove("hidden");
+				return false;
 			}
 			wordArray.splice(randomNumber, 1); // removes the current word from the word array so it can't be re-used
 
@@ -266,6 +336,12 @@
 			document.getElementById("wonOrLost").innerHTML = "";
 			document.getElementById("tryAgain").innerHTML = "";
 			document.getElementById("mobileInput").value = "";
+
+			for(var i = 1; i <= 10; i++)
+			{
+				var thisDivId = "wrongAnswer" + i;
+				document.getElementById(thisDivId).classList.add("hidden")
+			}
 		}
 
 	</script>
