@@ -11,13 +11,8 @@
   	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-	<!-- <link rel="stylesheet" href="assets\css\starWarsPoster.css"> -->
-	<style>
-		.spaced {
-			letter-spacing: 2px;
-			font-size:15px;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" href="assets\css\stylePostBootstrap.css">
+
 </head>
 <body>
 	<container class="text-center">
@@ -59,12 +54,16 @@
 				<div id="wrongAnswer10" class="hidden">Han:  There's nothin' I can do about it, kid. I'm in full power. I'm going to have to shut down. But they're not going to get me without a fight!  (You were captured)</div>
 			</div>
 		</row>
-		<row>
+		<row class="text-center">
 			<div id="wonOrLost"></div>
 			<div id="tryAgain"></div>
 		</row>
 	</container>
-	<div id="pleaseRefreshBrowser" class="hidden">There are no more words in the queue, please refresh the browser to continue playing!</div>
+	<!-- TODO overlay this as a large window -->
+	<div id="pleaseRefreshBrowser" class="text-center align-middle absolute hidden">
+		<h1>There are no more words to guess, please refresh the browser to continue playing!</h1>
+		<p>... shameless plug about giving me money to do more on this</p>
+	</div>
 		
 	<div id="textInputForMobileToShowKeyboard" class="hidden">
 		<hr>
@@ -76,26 +75,34 @@
 
 
   	<script type="text/javascript">
-     
+   
+		// Gets Link for Theme Song
+     	var audioElementTheme = document.createElement("audio");
+      	audioElementTheme.setAttribute("src", "assets/music/themeMusic.mp3");
+
+     	var audioElementWin = document.createElement("audio");
+      	audioElementWin.setAttribute("src", "assets/music/gameWon.mp3");
+
+      	var audioElementLoss = document.createElement("audio");
+      	audioElementLoss.setAttribute("src", "assets/music/gameLost.mp3");
+
+      	var musicAutoPlay = true;
+
+
      	$(document).ready(function() {
 
-	    	// Gets Link for Theme Song
-	     	var audioElement = document.createElement("audio");
-	      	audioElement.setAttribute("src", "assets/music/themeMusic.mp3");
-
-	     	var audioElement = document.createElement("audio");
-	      	audioElement.setAttribute("src", "assets/music/gameWon.mp3");
-
-	      	var audioElement = document.createElement("audio");
-	      	audioElement.setAttribute("src", "assets/music/gameLost.mp3");
 
 	      	// Theme Button
 	      	$(".theme-button").on("click", function() {
-		        audioElement.play();
+		        //audioElementTheme.play();
+		        music("theme", "start");
+		        musicAutoPlay = true;
 	    	});
 
 	      	$(".pause-button").on("click", function() {
-	        	audioElement.pause();
+	        	//audioElementTheme.pause();
+	        	music("all", "pause");
+	        	musicAutoPlay = false;
 	      	});
       	});
 
@@ -160,7 +167,11 @@
 					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
 					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					document.getElementById("currentPartialWord").innerHTML = "The current word or phrase: " + correctGuessesArray;
-					document.getElementById("wonOrLost").innerHTML = "You Won, and won't hang... this time!";
+					document.getElementById("wonOrLost").innerHTML = "<h1>You Won, and won't hang... this time!</h1>";
+					if (musicAutoPlay === true) {	
+						music("all", "pause");
+						music("win", "start");
+					}
 					alert("You won!");
 					if (debugging) {console.log("----- End Game -----");}
 				}
@@ -170,6 +181,11 @@
 					document.getElementById("currentLettersGuessed").innerHTML = "Currently guessed letters: " + game.previousGuessesArray;
 					document.getElementById("numberOfGuessesRemaining").innerHTML = "Number of bad guesses remaining: " + (game.maxIncorrectGuesses - game.incorrectGuesses);
 					document.getElementById("wonOrLost").innerHTML = "You lost.  The word was: " + game.thisWord;
+					if (musicAutoPlay === true)
+					{	
+						music("all", "pause");
+						music("loss", "start");
+					}
 					alert("You lost!");
 					if (debugging) {console.log("----- End Game -----");}
 				}
@@ -290,7 +306,6 @@
 		}
 
 		function setupGame(wordArray) {
-			
 			var game = {thisWord:"", 
 						thisWordArray:[], 
 						previousGuessesArray:[],
@@ -301,6 +316,11 @@
 						};
 
 			cleanupHtml();
+			if (musicAutoPlay === true)
+			{
+				music("all", "pause");
+				music("theme", "start");
+			}
 
 			var randomNumber = Math.floor(Math.random() * wordArray.length);
 			game.thisWord = wordArray[randomNumber];
@@ -342,6 +362,43 @@
 				var thisDivId = "wrongAnswer" + i;
 				document.getElementById(thisDivId).classList.add("hidden")
 			}
+		}
+
+		function music(playThis, startPause) {
+
+			console.log("attempting to start or pause music: >" + playThis + "< >" + startPause + "<");
+
+	     	// var audioElementWin = document.createElement("audio");
+	      // 	audioElementWin.setAttribute("src", "assets/music/gameWon.mp3");
+
+	      // 	var audioElementLoss = document.createElement("audio");
+	      // 	audioElementLoss.setAttribute("src", "assets/music/gameLost.mp3");
+
+			if (startPause == "pause") {
+				console.log("pause all music.");
+				audioElementTheme.pause(); 
+		        audioElementWin.pause();
+		        audioElementLoss.pause();
+			}
+			else if (startPause == "start") {
+				console.log("starting... something... like... " + playThis);
+				if (playThis == "win"){
+					console.log("play the win music!")
+					audioElementWin.play();
+				}
+				else if (playThis == "loss") {
+					console.log("playthe loss music.  :(")
+					audioElementLoss.play();
+				}
+				else if (playThis == "theme") {
+					console.log("play the theme music!");
+					audioElementTheme.play();
+				}
+				else {
+					console.log("not sure how we got here with audio... bug report");
+				}
+			}
+
 		}
 
 	</script>
